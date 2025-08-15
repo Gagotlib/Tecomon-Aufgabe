@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import * as widgetService from '../services/widget-services'
+import * as widgetService from '../services/widget.service'
 
 export const getWidgets = async (_req: Request, res: Response) => {
 	try {
@@ -18,7 +18,7 @@ export const createWidget = async (req: Request, res: Response) => {
 		return
 	}
 	try {
-		const widget = await widgetService.createNewWidget(location)
+		const widget = await widgetService.createWidget(location)
 		res.status(201).json(widget)
 	} catch (err) {
 		res.status(500).json({ error: (err as Error).message })

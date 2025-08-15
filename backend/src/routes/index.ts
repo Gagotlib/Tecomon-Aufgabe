@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import widgetRoutes from './widget.route';
+import widgetRoutes from './widget.router';
 
 const router = Router();
 
 
-router.use('/widgets', widgetRoutes);
+router.use('/api/widgets', widgetRoutes);
 
 
 export default router;
