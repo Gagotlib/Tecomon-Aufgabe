@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import * as widgetService from '../services/widget.service'
+import widgetModel from '../models/widget.model'
 
 export const getWidgets = async (_req: Request, res: Response) => {
 	try {
@@ -17,6 +18,14 @@ export const createWidget = async (req: Request, res: Response) => {
 		res.status(400).json({ error: 'Missing location' })
 		return
 	}
+
+	// Check if widget already exists
+	const existing = await widgetModel.findOne({ location: location.trim() })
+	if (existing) {
+		res.status(400).json({ error: `Widget for "${location}" already exists.` })
+		return
+	}
+
 	try {
 		const widget = await widgetService.createWidget(location)
 		res.status(201).json(widget)
