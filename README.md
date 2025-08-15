@@ -1,123 +1,115 @@
-## 📦 Projektstruktur (Vorschlag)
+# 🌤️ Weather Widgets Dashboard
 
-```txt
-/project-root
-├── frontend/         → Next.js Frontend (Dashboard)
-│   ├── pages/
-│   ├── components/
-│   └── utils/
-├── backend/          → Node.js Backend (Express oder Fastify)
-│   ├── routes/
-│   ├── controllers/
-│   ├── models/
-│   ├── services/     → Wetterdaten-Logik inkl. Caching
-│   └── cache/        → optional: In-Memory oder File-basierter Cache
-└── README.md
-```
+A simple dashboard to track the current weather of multiple locations using customizable widgets. Users can add locations, view current weather data, and remove widgets. The app fetches weather data from **Open-Meteo API** and caches responses for 5 minutes to reduce redundant requests.
 
 ---
 
-## 🚀 Setup-Anleitung
+## 📝 How it works
 
-### Voraussetzungen:
-- Node.js (v18+ empfohlen)
-- MongoDB (lokal oder über MongoDB Atlas)
-- NPM oder Yarn
-
-### 1. Backend starten
-
-```bash
-# Ins Backend wechseln
-cd backend
-
-# Abhängigkeiten installieren
-npm install
-
-# Entwicklungsserver starten
-npm run dev
-```
-
-> 💡 Beispiel `.env`-Datei:
-```env
-MONGODB_URI=mongodb://localhost:27017/widgets
-PORT=5000
-```
+1. User enters a location in the dashboard input.
+2. The system checks if a widget for this location already exists:
+   - ✅ If yes, shows an error toast: "This location already exists".
+   - ❌ If no, a new widget is created.
+3. Backend fetches weather data from Open-Meteo:
+   - If the location was requested in the last 5 minutes, the cached value is returned.
+4. The frontend displays the widget with:
+   - Location name
+   - Current temperature
+   - Day/night background
+5. Users can delete widgets at any time.
 
 ---
 
-### 2. Frontend starten
+## 🛠️ Technologies
 
-```bash
-# Ins Frontend wechseln
-cd frontend
+**Frontend:**
+- Next.js 15 
+- React
+- Tailwind CSS (Styling)
+- Axios (HTTP requests)
+- Sonner (Toasts)
 
-# Abhängigkeiten installieren
-npm install
-
-# Entwicklungsserver starten
-npm run dev
-```
-
-> 💡 Standardmäßig läuft das Frontend unter `http://localhost:3000`  
-> 💡 Das Backend sollte unter `http://localhost:5000` erreichbar sein
-
----
-
-## 🔍 Funktionale Anforderungen
-
-### 🔹 Dashboard (Frontend)
-- Benutzer kann mehrere Widgets erstellen, z. B. für:
-  - Wetter in Berlin
-  - Wetter in Hamburg
-  - Wetter in Paris
-- Jedes Widget zeigt live die Wetterdaten für den gewählten Ort
-- Widgets können gelöscht werden
-- Keine Authentifizierung notwendig
-
-### 🔹 Backend (API + MongoDB)
-- API zum Erstellen, Abrufen und Löschen von Widgets
-- MongoDB speichert:
-  - Widget-Daten (`_id`, `location`, `createdAt`)
-  - (Optional: Benutzer-ID, falls später Auth hinzukommt)
-
-### 🔹 Wetterdaten-Handling
-- Wetterdaten werden bei Bedarf vom Backend über einen externen Wetterdienst abgerufen (z. B. open-meteo oder OpenWeather)
-- Wenn für eine Stadt in den letzten **5 Minuten** bereits ein Abruf erfolgte, wird der **cached** Wert zurückgegeben (Memory oder einfache Cache-Datei)
+**Backend:**
+- Node.js
+- Express.js
+- MongoDB
+- Axios
+- In-memory cache (5 minutes per location)
 
 ---
 
-## 🧾 API-Vorschlag
+## 🚀 Setup
 
-| Methode | Endpoint                 | Beschreibung                       |
-|---------|--------------------------|------------------------------------|
-| GET     | `/widgets`               | Liste aller gespeicherten Widgets |
-| POST    | `/widgets`               | Neues Widget erstellen (`location`) |
-| DELETE  | `/widgets/:id`           | Widget löschen                     |
+### Prerequisites
+- Node.js v18+
+- MongoDB (local or Atlas)
+- npm or yarn
+
+### 1️⃣ Backend
+Navigate to the backend folder and install dependencies:
+
+    cd backend
+    npm install
+    npm run dev
+
+
+
+### 2️⃣ Frontend
+Navigate to the frontend folder and install dependencies:
+
+    cd frontend
+    npm install
+    npm run dev
+
+> Frontend runs at [http://localhost:3000](http://localhost:3000)  
+> Backend should be running at [http://localhost:5000](http://localhost:5000)
 
 ---
 
-## ☁️ Wetterdaten-API
+## 🔍 API Documentation
 
-Kostenlose APIs zur Auswahl:
-
-- [https://open-meteo.com/](https://open-meteo.com/) (kein API-Key nötig)
-- [https://openweathermap.org/api](https://openweathermap.org/api) (kostenlos, mit Key)
-
----
-
-## 🧪 Ziel des Projekts
-
-- Verständnis für API-Design, Next.js-Frontend und Microservice-Architektur
-- Umgang mit externen APIs und Caching
-- MongoDB-Datenmodellierung
-- Trennung von Backend-Logik und Frontend-Komponenten
-- saubere Code-Struktur, Modularität und Dokumentation
+| Method | Endpoint                | Description                             | Body / Params                  |
+|--------|------------------------|-----------------------------------------|--------------------------------|
+| GET    | `/widgets`             | List all saved widgets                  | –                              |
+| POST   | `/widgets`             | Create a new widget (`location`)        | `{ "location": "London" }`    |
+| DELETE | `/widgets/:id`         | Delete a widget by ID                   | `id`                             |
+| GET    | `/weather/:location`   | Fetch current weather (cached 5 mins)  | `location`                              |
 
 ---
 
-## 📄 Was soll eingereicht werden?
+## 📊 Architecture Overview
 
-- `README.md` mit:
-  - Setup-Anleitung
-  - API-Beschreibung
-  - Kurzer Architekturüberblick (z. B. mit Text oder Diagramm)
+```mermaid
+User
+ └─> Frontend: WidgetForm
+       └─> Submit location
+             └─> Backend: POST /widgets
+                   └─> Check if location exists
+                         ├─ Yes → Return error toast
+                         └─ No  → Create widget in MongoDB
+                                   └─> fetchWeather Service
+                                         ├─ Cached last 5 min? → Return cached weather
+                                         └─ No → Call Open-Meteo API
+                                                   └─> Save response in cache
+                                         └─> Return weather data
+                                   └─> Frontend updates WidgetCardContainer
+                                         └─> User sees updated dashboard
+
+````
+
+## ✅ Features
+- Add multiple widgets for different locations.
+
+- Autocomplete suggestions while typing a location.
+
+- Prevent duplicate widgets.
+
+- Display day/night backgrounds.
+
+- Cached weather data for 5 minutes.
+
+- Delete widgets dynamically.
+
+- Error handling via toast notifications.
+
+##
