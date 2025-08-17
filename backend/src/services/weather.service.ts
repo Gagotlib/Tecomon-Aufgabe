@@ -6,7 +6,7 @@ type CachedWeather = {
 }
 
 const weatherCache = new Map<string, CachedWeather>()
-const CACHE_DURATION = 5 * 60 * 1000 // 5 minutos
+const CACHE_DURATION = 5 * 60 * 1000 
 
 export async function fetchWeather(location: string) {
 	const now = Date.now()
