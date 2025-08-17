@@ -49,9 +49,17 @@ export function useWidgets() {
 		}
 	}
 
-	// Initial load
+	// Initial load + auto refresh
 	useEffect(() => {
 		loadWidgets()
+
+		// Refresh
+		const interval = setInterval(() => {
+			loadWidgets()
+		}, 10 * 60 * 1000)
+
+		// Cleanup on unmount
+		return () => clearInterval(interval)
 	}, [loadWidgets])
 
 	return { widgets, loading, addWidget, removeWidget }

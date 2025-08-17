@@ -65,7 +65,7 @@ export default function WidgetForm({ addWidget, loading }: WidgetFormProps) {
 	}
 
 	return (
-		<div className='relative w-full' ref={containerRef}>
+		<section className='relative w-full' ref={containerRef}>
 			<form onSubmit={handleSubmit} className='bg-white p-6 rounded-lg shadow-md mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4'>
 				<Input className='border rounded px-3 py-2 flex-1' value={location} onChange={(e) => setLocation(e.target.value)} onKeyDown={handleKeyDown} placeholder='Location' required type='text' />
 
@@ -75,6 +75,6 @@ export default function WidgetForm({ addWidget, loading }: WidgetFormProps) {
 			</form>
 
 			{showDropdown && suggestions.length > 0 && <DropdownSuggestions suggestions={suggestions} highlightIndex={highlightIndex} onSelect={handleSelect} onHover={setHighlightIndex} />}
-		</div>
+		</section>
 	)
 }

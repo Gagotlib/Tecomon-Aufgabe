@@ -9,7 +9,7 @@ export default function Home() {
 	const { widgets, loading, addWidget, removeWidget,  } = useWidgets()
 
 	return (
-		<div className='min-h-screen bg-gradient-to-r from-blue-100 via-blue-50 to-purple-100 py-12 px-4'>
+		<main className='min-h-screen bg-gradient-to-r from-blue-100 via-blue-50 to-purple-100 py-12 px-4'>
 			<Toaster position='top-right' richColors />
 			<div className='max-w-5xl mx-auto'>
 				{/* App Title */}
@@ -24,6 +24,6 @@ export default function Home() {
 				{/* Widget Cards */}
 				<WidgetCardContainer widgets={widgets} loading={loading} onDelete={removeWidget} />
 			</div>
-		</div>
+		</main>
 	)
 }
