@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { getWidgets, createWidget, deleteWidget } from '../controllers/widget-controller'
+import { getWidgets, createWidget, deleteWidget } from '../controllers/widget.controller'
 
 const router = Router()
 
